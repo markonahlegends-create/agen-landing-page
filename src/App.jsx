@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+const categories = ['Semua', 'Hoodie', 'Jacket', 'T-Shirt', 'Pants', 'Accessories'];
+
+const products = [
+  { id: 1, name: 'Oversized Hoodie Black', category: 'Hoodie', price: 299000, image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80', rating: '4.9 (120 terjual)', description: 'Hoodie oversized dengan bahan fleece lembut yang nyaman dipakai sehari-hari dan cocok untuk tampilan streetwear modern.', highlights: ['Bahan fleece premium', 'Cut oversized', 'Warna hitam timeless'] },
+  { id: 2, name: 'Urban Street Jacket', category: 'Jacket', price: 399000, image: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=600&q=80', rating: '4.8 (85 terjual)', description: 'Jaket luar yang ringan namun hangat, ideal untuk perjalanan kota dan tampilan santai yang stylish.', highlights: ['Lapisan ringan', 'Tahan angin', 'Detail warna premium'] },
+  { id: 3, name: 'Graphic Tee Statement', category: 'T-Shirt', price: 149000, image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80', rating: '5.0 (310 terjual)', description: 'Kaos graphic dengan desain statement yang kuat dan nyaman dipakai untuk aktivitas harian.', highlights: ['Bahan katun lembut', 'Desain bold', 'Sesuai untuk layering'] },
+  { id: 4, name: 'Cargo Street Pants', category: 'Pants', price: 349000, image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80', rating: '4.7 (95 terjual)', description: 'Celana cargo dengan potongan relaxed yang memberi nuansa urban dan banyak ruang untuk aksesori.', highlights: ['Potongan roomy', 'Kantong serbaguna', 'Material kuat'] },
+  { id: 5, name: 'Minimalist Hoodie Grey', category: 'Hoodie', price: 289000, image: 'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=600&q=80', rating: '4.9 (210 terjual)', description: 'Hoodie minimalis dengan warna netral yang mudah dipadupadankan dalam berbagai outfit.', highlights: ['Warna neutral', 'Nyaman dipakai', 'Cocok untuk semua style'] },
+  { id: 6, name: 'Vintage Windbreaker', category: 'Jacket', price: 429000, image: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80', rating: '4.9 (64 terjual)', description: 'Windbreaker vintage dengan nuansa retro yang unik dan cocok untuk cuaca berubah-ubah.', highlights: ['Tampilan retro', 'Ringan dan praktis', 'Tahan angin'] },
+  { id: 7, name: 'Streetwear Cap Limited', category: 'Accessories', price: 129000, image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80', rating: '5.0 (40 terjual)', description: 'Topi streetwear dengan desain limited edition yang memantapkan tampilan casual Anda.', highlights: ['Desain limited', 'Nyaman dipakai', 'Detail premium'] },
+];
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-
-  const categories = ['Semua', 'Hoodie', 'Jacket', 'T-Shirt', 'Pants', 'Accessories'];
-
-  const products = [
-    { id: 1, name: 'Oversized Hoodie Black', category: 'Hoodie', price: 299000, image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80', rating: '4.9 (120 terjual)' },
-    { id: 2, name: 'Urban Street Jacket', category: 'Jacket', price: 399000, image: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=600&q=80', rating: '4.8 (85 terjual)' },
-    { id: 3, name: 'Graphic Tee Statement', category: 'T-Shirt', price: 149000, image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80', rating: '5.0 (310 terjual)' },
-    { id: 4, name: 'Cargo Street Pants', category: 'Pants', price: 349000, image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80', rating: '4.7 (95 terjual)' },
-    { id: 5, name: 'Minimalist Hoodie Grey', category: 'Hoodie', price: 289000, image: 'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=600&q=80', rating: '4.9 (210 terjual)' },
-    { id: 6, name: 'Vintage Windbreaker', category: 'Jacket', price: 429000, image: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80', rating: '4.9 (64 terjual)' },
-    { id: 7, name: 'Streetwear Cap Limited', category: 'Accessories', price: 129000, image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80', rating: '5.0 (40 terjual)' },
-  ];
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [detailQty, setDetailQty] = useState(1);
 
   // Filter produk berdasarkan pencarian & kategori
   const filteredProducts = products.filter(product => {
@@ -25,20 +27,57 @@ export default function App() {
     return matchesSearch && matchesCategory;
   });
 
+  useEffect(() => {
+    const syncProductFromHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (!hash.startsWith('product/')) {
+        setSelectedProduct(null);
+        return;
+      }
+
+      const productId = Number(hash.split('/')[1]);
+      const foundProduct = products.find((item) => item.id === productId);
+      setSelectedProduct(foundProduct || null);
+    };
+
+    syncProductFromHash();
+    window.addEventListener('hashchange', syncProductFromHash);
+    window.addEventListener('popstate', syncProductFromHash);
+
+    return () => {
+      window.removeEventListener('hashchange', syncProductFromHash);
+      window.removeEventListener('popstate', syncProductFromHash);
+    };
+  }, []);
+
+  const openProductDetail = (product) => {
+    setSelectedProduct(product);
+    setDetailQty(1);
+    window.history.pushState({}, '', `#/product/${product.id}`);
+  };
+
+  const closeProductDetail = () => {
+    setSelectedProduct(null);
+    setDetailQty(1);
+    window.history.pushState({}, '', window.location.pathname + window.location.search);
+  };
+
   // Tambah ke keranjang
-  const addToCart = (product) => {
-    const existingItem = cart.find(item => item.id === product.id);
-    if (existingItem) {
-      setCart(cart.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item));
-    } else {
-      setCart([...cart, { ...product, qty: 1 }]);
-    }
+  const addToCart = (product, qty = 1) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map((item) => item.id === product.id ? { ...item, qty: item.qty + qty } : item);
+      }
+
+      return [...prevCart, { ...product, qty }];
+    });
     setIsCartOpen(true);
   };
 
   // Ubah jumlah item di keranjang
   const updateQty = (id, delta) => {
-    setCart(cart.map(item => {
+    setCart((prevCart) => prevCart.map((item) => {
       if (item.id === id) {
         const newQty = item.qty + delta;
         return newQty > 0 ? { ...item, qty: newQty } : null;
@@ -52,8 +91,8 @@ export default function App() {
   // Checkout ke WhatsApp
   const handleCheckout = () => {
     if (cart.length === 0) return;
-    let message = "Halo, saya ingin memesan produk berikut:%0A";
-    cart.forEach(item => {
+    let message = 'Halo, saya ingin memesan produk berikut:%0A';
+    cart.forEach((item) => {
       message += `- ${item.name} (${item.qty}x) - Rp ${item.price.toLocaleString('id-ID')}%0A`;
     });
     message += `%0A*Total Pembayaran: Rp ${totalPrice.toLocaleString('id-ID')}*`;
@@ -65,10 +104,10 @@ export default function App() {
       {/* Navbar ala E-Commerce */}
       <header className="sticky top-0 z-40 bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 px-4 md:px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <h1 className="text-xl font-black tracking-wider bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+          <button onClick={() => { setSelectedProduct(null); window.history.pushState({}, '', window.location.pathname + window.location.search); }} className="text-xl font-black tracking-wider bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
             URBANSTORE.ID
-          </h1>
-          
+          </button>
+
           <div className="flex-1 max-w-md hidden md:block">
             <input
               type="text"
@@ -123,9 +162,21 @@ export default function App() {
         {/* Grid Produk */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col group hover:border-zinc-700 transition-all">
+            <div
+              key={product.id}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col group hover:border-zinc-700 transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(168,85,247,0.12)]"
+              onClick={() => openProductDetail(product)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  openProductDetail(product);
+                }
+              }}
+            >
               <div className="h-48 md:h-60 overflow-hidden relative">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
                 <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-xs px-2.5 py-1 rounded-lg text-zinc-300">
                   {product.category}
                 </span>
@@ -141,8 +192,11 @@ export default function App() {
                   </span>
                 </div>
                 <button
-                  onClick={() => addToCart(product)}
-                  className="w-full py-2.5 bg-zinc-800 hover:bg-purple-600 text-white text-xs md:text-sm font-semibold rounded-xl transition-all"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    addToCart(product);
+                  }}
+                  className="w-full py-2.5 bg-zinc-800 hover:bg-purple-600 text-white text-xs md:text-sm font-semibold rounded-xl transition-all duration-300 ease-out"
                 >
                   + Keranjang
                 </button>
@@ -151,6 +205,83 @@ export default function App() {
           ))}
         </div>
       </main>
+
+      {selectedProduct && (
+        <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-md overflow-y-auto animate-[fadeIn_0.25s_ease-out]">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 animate-[slideUp_0.3s_ease-out]">
+            <button
+              onClick={closeProductDetail}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/80 px-4 py-2 text-sm font-semibold text-zinc-300 transition-all duration-300 ease-out hover:bg-zinc-800 hover:-translate-y-0.5"
+            >
+              ← Kembali ke katalog
+            </button>
+
+            <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="rounded-[2rem] border border-zinc-800 bg-zinc-900/80 p-4 md:p-6">
+                <img src={selectedProduct.image} alt={selectedProduct.name} className="h-[420px] w-full rounded-[1.5rem] object-cover transition-transform duration-500 ease-out hover:scale-[1.02]" />
+              </div>
+
+              <div className="space-y-5 rounded-[2rem] border border-zinc-800 bg-zinc-900/80 p-5 md:p-7">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="rounded-full bg-purple-600/20 px-3 py-1 text-xs font-semibold text-purple-400">
+                    {selectedProduct.category}
+                  </span>
+                  <div className="text-sm text-zinc-400">⭐ {selectedProduct.rating}</div>
+                </div>
+
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-black">{selectedProduct.name}</h2>
+                  <p className="mt-3 text-sm leading-7 text-zinc-400">{selectedProduct.description}</p>
+                </div>
+
+                <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Harga</p>
+                  <div className="mt-2 text-3xl font-black text-purple-400">
+                    Rp {selectedProduct.price.toLocaleString('id-ID')}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">Keunggulan</h3>
+                  <ul className="mt-3 space-y-2 text-sm text-zinc-300">
+                    {selectedProduct.highlights.map((highlight) => (
+                      <li key={highlight} className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full bg-purple-500" />
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 p-3">
+                  <button onClick={() => setDetailQty((prev) => prev > 1 ? prev - 1 : 1)} className="h-10 w-10 rounded-xl bg-zinc-800 text-xl font-bold transition-all duration-200 ease-out hover:bg-zinc-700">−</button>
+                  <span className="min-w-10 text-center text-lg font-bold">{detailQty}</span>
+                  <button onClick={() => setDetailQty((prev) => prev + 1)} className="h-10 w-10 rounded-xl bg-zinc-800 text-xl font-bold transition-all duration-200 ease-out hover:bg-zinc-700">+</button>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button
+                    onClick={() => addToCart(selectedProduct, detailQty)}
+                    className="w-full rounded-2xl bg-zinc-800 py-3.5 font-semibold text-white transition-all duration-300 ease-out hover:bg-purple-600 hover:-translate-y-0.5"
+                  >
+                    + Keranjang
+                  </button>
+                  <button
+                    onClick={() => {
+                      addToCart(selectedProduct, detailQty);
+                      setIsCartOpen(true);
+                      closeProductDetail();
+                    }}
+                    className="w-full rounded-2xl bg-red-600 py-3.5 font-semibold text-white transition-all duration-300 ease-out hover:bg-red-500 hover:-translate-y-0.5"
+                  >
+                    Beli Sekarang
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Cart Drawer / Modal */}
       {isCartOpen && (
@@ -166,7 +297,7 @@ export default function App() {
                 {cart.length === 0 ? (
                   <p className="text-center text-zinc-500 py-12">Keranjang masih kosong.</p>
                 ) : (
-                  cart.map(item => (
+                  cart.map((item) => (
                     <div key={item.id} className="flex items-center justify-between gap-4 bg-zinc-950 p-3 rounded-xl border border-zinc-800">
                       <img src={item.image} alt={item.name} className="w-14 h-14 object-cover rounded-lg" />
                       <div className="flex-1">
